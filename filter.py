@@ -1,10 +1,12 @@
 import pandas as pd
-from langdetect import detect
+import numpy as np
 
-df = pd.read_csv('sek-200-500.csv')
+arr = pd.read_csv('filtered-data/sek-600-700 FILTERED.csv', header=None, dtype=object).values
 
-df['User Rating'] = str(df['User Rating'])
+for i in range (1,len(arr)):
+    arr[i, 9] = str(round(float(arr[i, 9]) * 0.093, 2))
 
-df_new = df[df['User Rating'].apply(detect).eq('en')]
+print(arr)
 
-df_new.to_csv('sek-400.csv', sep='\t')
+pd.DataFrame(arr).to_csv('filtered-data/eur-60-70.csv', header=None, index=None)
+

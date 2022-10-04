@@ -21,9 +21,7 @@ from langdetect import detect
 pd.set_option('display.max_colwidth', None)
 
 
-df = pd.read_csv('filtered-data/eur-0-30.csv')
-
-
+df = pd.read_csv('filtered-data/eur-20-70.csv')
 
 
 # add a column for the word count
@@ -86,7 +84,7 @@ vec_text = tfv.fit_transform(clean_desc)
 words = tfv.get_feature_names_out()
 
 # setup kmeans clustering
-kmeans = KMeans(n_clusters=25, n_init=17, tol=0.01, max_iter=300)
+kmeans = KMeans(n_clusters=15)
 # fit the data
 kmeans.fit(vec_text)
 # this loop transforms the numbers back into words
@@ -95,11 +93,15 @@ for num, centroid in enumerate(common_words):
     print(str(num) + ' : ' + ', '.join(words[word] for word in centroid))
 
 
-
-
 # add the cluster label to the data frame
 df['cluster'] = kmeans.labels_
-clusters = df.groupby(['cluster', 'price']).size()
+cdf = df.groupby('cluster')['price','User Rating'].mean()
+
+print(cdf)
+
+
+'''
+clusters = df.groupby(['cluster', 'User Rating']).size()
 fig, ax1 = plt.subplots(figsize=(26, 15))
 sns.heatmap(clusters.unstack(level='price'), ax=ax1, cmap='Reds')
 ax1.set_xlabel('price').set_size(18)
@@ -110,6 +112,7 @@ sns.heatmap(clusters.unstack(level='above_twenty'), ax=ax2, cmap="Reds")
 ax2.set_xlabel('Above 20 euros').set_size(18)
 ax2.set_ylabel('Cluster').set_size(18)
 plt.show()
+'''
 
 '''
 clusters = df.groupby(['cluster', 'User Rating']).size()
