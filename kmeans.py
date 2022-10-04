@@ -94,7 +94,9 @@ common_words = kmeans.cluster_centers_.argsort()[:, -1:-11:-1]
 for num, centroid in enumerate(common_words):
     print(str(num) + ' : ' + ', '.join(words[word] for word in centroid))
 
-'''
+
+
+
 # add the cluster label to the data frame
 df['cluster'] = kmeans.labels_
 clusters = df.groupby(['cluster', 'price']).size()
@@ -109,6 +111,7 @@ ax2.set_xlabel('Above 20 euros').set_size(18)
 ax2.set_ylabel('Cluster').set_size(18)
 plt.show()
 
+'''
 clusters = df.groupby(['cluster', 'User Rating']).size()
 fig, ax1 = plt.subplots(figsize=(26, 15))
 sns.heatmap(clusters.unstack(level='User Rating'), ax=ax1, cmap='Reds')
