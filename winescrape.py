@@ -8,7 +8,7 @@ def get_wine_data(wine_id, year, page):
     }
 
     # <-- increased the number of reviews to 9999
-    api_url = f"https://www.vivino.com/api/wines/{wine_id}/reviews?per_page=50&year={year}&page={page}" 
+    api_url = f"https://www.vivino.com/api/wines/{wine_id}/reviews?per_page=50&year={year}&page={page}"
 
     data = requests.get(
         api_url.format(id=wine_id, year=year, page=page), headers=headers
@@ -20,15 +20,16 @@ def get_wine_data(wine_id, year, page):
 r = requests.get(
     "https://www.vivino.com/api/explore/explore",
     params={
-        "country_codes[]": ["pt", "fr", "es", "it","us"],
+        "country_codes[]": ["pt", "fr", "es", "it", "us"],
         "currency_code": "SEK",
+        "language": "en",
         "grape_filter": "varietal",
         "min_rating": "1",
         "order_by": "price",
         "order": "asc",
-        "page": 10,
-        "price_range_max": "1000",
-        "price_range_min": "900",
+        "page": 30,
+        "price_range_max": "5000",
+        "price_range_min": "2000",
         "wine_type_ids[]": "1",
     },
     headers={
@@ -50,7 +51,8 @@ results = [
 ]
 dataframe = pd.DataFrame(
     results,
-    columns=["Winery", "Year", "Wine ID", "Wine", "Rating", "num_review", "price"],
+    columns=["Winery", "Year", "Wine ID",
+             "Wine", "Rating", "num_review", "price"],
 )
 
 ratings = []
@@ -85,4 +87,4 @@ ratings = pd.DataFrame(
 
 df_out = ratings.merge(dataframe)
 df_out.sort_values("price")
-df_out.to_csv("sek-900-1000.csv", index=False)
+df_out.to_csv("sek-2000-.csv", index=False)
