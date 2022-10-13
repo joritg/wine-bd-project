@@ -1,5 +1,9 @@
 import requests
 import pandas as pd
+import json
+from collections import defaultdict
+import codecs
+import os
 
 
 def get_wine_data(wine_id, year, page):
@@ -21,15 +25,15 @@ r = requests.get(
     "https://www.vivino.com/api/explore/explore",
     params={
         "country_codes[]": ["pt", "fr", "es", "it", "us"],
-        "currency_code": "SEK",
+        "currency_code": "EUR",
         "language": "en",
         "grape_filter": "varietal",
         "min_rating": "1",
         "order_by": "price",
         "order": "asc",
-        "page": 30,
-        "price_range_max": "5000",
-        "price_range_min": "2000",
+        "page": 40,
+        "price_range_max": "60",
+        "price_range_min": "45",
         "wine_type_ids[]": "1",
     },
     headers={
@@ -56,6 +60,14 @@ dataframe = pd.DataFrame(
 )
 
 ratings = []
+if os.stat("users-new.json").st_size == 0:
+    users = defaultdict(dict)
+else:
+    with open('users-new.json') as json_file:
+        users = json.load(json_file)
+
+user = {}
+
 for _, row in dataframe.iterrows():
     page = 1
     while True:
@@ -69,6 +81,25 @@ for _, row in dataframe.iterrows():
             break
 
         for r in d["reviews"]:
+            # print(r['user'].get('id'))
+            # with open('user.json', 'w') as convert_file:
+             #   convert_file.write(json.dumps(r['user']))
+            user_id = r['user'].get('id')
+
+            if user_id not in users:
+                users[user_id] = {}
+
+            user['name'] = r['user'].get('alias')
+            user['language'] = r['user'].get('language')
+            user[r['id']] = [r['vintage'].get(
+                'id'), row['Winery'], row['price'], r['rating']]
+            users[r['user'].get('id')].update(user)
+            user = {}
+
+
+            
+
+            '''
             ratings.append(
                 [
                     row["Year"],
@@ -78,13 +109,20 @@ for _, row in dataframe.iterrows():
                     r["created_at"],
                 ]
             )
+            '''
 
         page += 1
-
-ratings = pd.DataFrame(
+'''
+ratings=pd.DataFrame(
     ratings, columns=["Year", "Wine ID", "User Rating", "Note", "CreatedAt"]
 )
+'''
+with codecs.open("users-new.json", "w", encoding="utf-8") as convert_file:
+    convert_file.write((json.dumps(users, indent=4)))
 
-df_out = ratings.merge(dataframe)
+
+'''
+df_out=ratings.merge(dataframe)
 df_out.sort_values("price")
 df_out.to_csv("sek-2000-.csv", index=False)
+'''
