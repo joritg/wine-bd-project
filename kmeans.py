@@ -31,7 +31,6 @@ plt.show()
 '''
 
 
-
 # create a list of stop words
 stop_words = stopwords.words('english')
 stop_words.extend(['wine', 'vin', 'like', 'bit', 'wife', 'nose', 'quite', 'note', 'red', 'nice', 'good', 'great', 'well', 'taste', 'really'])
